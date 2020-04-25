@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 public class Main extends AppCompatActivity {
 
+    private int totalIterations = 0;
     double p = 4.0;
     int[][] points =  {{0, 6}, {1, 5}, {3, 3}, {2, 4}};
     double w1, w2;
@@ -40,6 +41,7 @@ public class Main extends AppCompatActivity {
         }
         if (done) {
             long execTimeMcs = (System.nanoTime() - start) / 1_000;
+            totalIterations = iterations;
             TextView.setText(
                     String.format(
                             "Trained successfully!\n" +
@@ -73,17 +75,25 @@ public class Main extends AppCompatActivity {
         final EditText deadlineEditText = (EditText) findViewById(R.id.dedlineEditText);
         final EditText iterationsEditText = (EditText) findViewById(R.id.iterationsEditText);
         final EditText rateEditText = (EditText) findViewById(R.id.rateEditText);
+        final TextView popUpView = (TextView) findViewById(R.id.popUpView);
+
         Button calcButton = (Button) findViewById(R.id.calcButtonl2);
         TextView = (TextView) findViewById(R.id.resTextViewl2);
 
         calcButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialogBuilder builder = new AlertDialog.Builder(Main.this)
+                builder.setCancelable(true);
+                builder.setTitle("Total Iterations");
+
                 try {
                     int iter = Integer.parseInt(iterationsEditText.getText().toString());
                     double learningRate = Double.parseDouble(rateEditText.getText().toString());
                     long timeDeadline = (long) (Double.parseDouble(deadlineEditText.getText().toString()) * 1_000_000_000);
                     trainingFunction(learningRate, iter, timeDeadline);
+                    builder.setMessage("Total number of iterations: " + totalIterations);
+                    builder.show();
 
                 } catch (NumberFormatException e) {
                     TextView.setText("Wrong input");
